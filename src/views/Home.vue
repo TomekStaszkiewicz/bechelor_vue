@@ -1,18 +1,37 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <Difficulty
+    :availableLevels="Object.keys(availableLevels)"
+    :onSelect="onSelectLevel"
+  />
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { defineComponent } from "vue";
+import Difficulty from "@/components/Difficulty.vue";
+import { GamePhase } from "@/managers/types";
 
-@Options({
+const availableLevels = {
+  Easy: 4,
+  Medium: 6,
+  Hard: 8,
+};
+
+export default defineComponent({
   components: {
-    HelloWorld,
+    Difficulty,
   },
-})
-export default class Home extends Vue {}
+  data: function () {
+    return {
+      availableLevels,
+    };
+  },
+  methods: {
+    onSelectLevel(l: keyof typeof availableLevels) {
+      console.log(`New level ${l}`);
+      this.$gameManager.gamePhase = GamePhase.BEFORE_START;
+      this.$gameManager.generateTiles(availableLevels[l]);
+      this.$router.push("game");
+    },
+  },
+});
 </script>
